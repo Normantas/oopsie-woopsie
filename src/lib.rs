@@ -8,19 +8,25 @@ pub struct PanicHandlerConfig {
     pub file_dir: Option<String>,
 }
 
-pub fn set_panic_handler(panicinfo: &PanicInfo, config: PanicHandlerConfig) {
-    let grad = panic_msg::get_message(panicinfo);
-    println!("{}", "bruh");
+pub fn set_panic_handler(panicinfo: &PanicInfo, _config: &PanicHandlerConfig) {
+    let panic_message = panic_msg::get_message(panicinfo);
+    println!("{}", &panic_message);
 
     #[cfg(feature = "minidump")]
     {
-        let minidump_result = minidump::write_minidump(config.file_dir.as_deref());
+        let minidump_result = minidump::write_minidump(_config.file_dir.as_deref());
         match minidump_result {
             Ok(file_path) => println!("Minidump written to {file_path:?}"),
             Err(err) => println!("Error while writing minidump! Err: {err}"),
         }
     };
 
-        println!("bruh!");
-    
+    #[cfg(feature = "panic_log")]
+    {
+        let minidump_result = panic_msg::write_panic_log(panic_message, _config.file_dir.as_deref());
+        match minidump_result {
+            Ok(file_path) => println!("Panic log written to {file_path:?}"),
+            Err(err) => println!("Error while writing panic log! Err: {err}"),
+        }
+    };
 }

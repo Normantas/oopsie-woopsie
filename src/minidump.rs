@@ -14,7 +14,7 @@ macro_rules! unwrap_or_return {
     }
 }
 
-pub fn write_minidump(destination_override: Option<&str>) -> Result<File, anyhow::Error> {
+pub fn write_minidump(destination_override: Option<&str>) -> Result<PathBuf, anyhow::Error> {
     let destination_dir: PathBuf = match destination_override {
         Some(destination_override) => format!("{destination_override}\\minidump.mdmp").into(),
         None => {
@@ -28,7 +28,7 @@ pub fn write_minidump(destination_override: Option<&str>) -> Result<File, anyhow
     };
     
     let mut minidump_destination_file: File =
-        unwrap_or_return!(File::create(destination_dir));
+        unwrap_or_return!(File::create(destination_dir.clone()));
 
     // The arguments for the minidump writer function.
     let mdarg_exception_code: Option<i32> = None; // The exception code as an i32.
@@ -45,7 +45,7 @@ pub fn write_minidump(destination_override: Option<&str>) -> Result<File, anyhow
     );
 
     match write_result {
-        Ok(()) => Ok(minidump_destination_file),
+        Ok(()) => Ok(destination_dir),
         Err(err) => Err(err.into()),
     }
 }

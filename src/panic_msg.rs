@@ -1,7 +1,6 @@
-#![cfg(feature = "panic_log")]
-
-use std::fs::File;
+#[cfg(feature = "panic_log")]
 use std::path::PathBuf;
+#[cfg(feature = "panic_log")]
 use directories::UserDirs;
 use std::panic::PanicInfo;
 
@@ -11,7 +10,7 @@ pub fn get_message(panicinfo: &PanicInfo) -> String {
 
     if let Some(location) = panicinfo.location() {
         panic_location = format!(
-            "{}:{}:{}",
+            "{} at line {} column {}",
             location.file(),
             location.line(),
             location.column()
@@ -19,11 +18,13 @@ pub fn get_message(panicinfo: &PanicInfo) -> String {
     }
 
     format!(
-        "\n\nThe current process panicked!\n\nPanic location: {panic_location}\nPanic payload: {panic_payload}\n\n\n",
+        "\n\nThe current process panicked!\n\nPanic location: {panic_location}\nPanic payload: {panic_payload}\n\n\nCaptured backtrace:\n{}\n\n\n",
+        std::backtrace::Backtrace::force_capture()
     )
 }
 
-pub fn write_panic_log(panic_msg: String, destination_override: Option<String>) -> Result<PathBuf, anyhow::Error> {
+#[cfg(feature = "panic_log")]
+pub fn write_panic_log(panic_msg: String, destination_override: Option<&str>) -> Result<PathBuf, anyhow::Error> {
     let destination_dir: PathBuf = match destination_override {
         Some(destination_override) => format!("{destination_override}\\panic_log.txt").into(),
         None => {
@@ -36,7 +37,7 @@ pub fn write_panic_log(panic_msg: String, destination_override: Option<String>) 
         },
     };
 
-    let write_result = std::fs::write(destination_dir, panic_msg);
+    let write_result = std::fs::write(destination_dir.clone(), panic_msg);
 
     match write_result {
         Ok(()) => Ok(destination_dir.into()),
