@@ -3,6 +3,7 @@ name = "oopsie_woopsie"
 version = "4.0.0"
 edition = "2021"
 license = "MIT"
+description = "A crate to make debugging unexpected panics easier on end-user machines."
 repository = "https://github.com/Normantas/oopsie-woopsie"
 keywords = ["debugging", "panic", "error"]
 categories = ["rust-patterns", "development-tools::debugging"]
