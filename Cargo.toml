@@ -1,7 +1,11 @@
 [package]
 name = "oopsie_woopsie"
-version = "0.1.0"
+version = "4.0.0"
 edition = "2021"
+license = "MIT"
+repository = "https://github.com/Normantas/oopsie-woopsie"
+keywords = ["debugging", "panic", "error"]
+categories = ["rust-patterns", "development-tools::debugging"]
 
 [features]
 panic_log = ["dep:directories", "dep:anyhow"]
